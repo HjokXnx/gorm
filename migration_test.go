@@ -42,6 +42,10 @@ type User struct {
 	IgnoredPointer    *User                 `sql:"-"`
 }
 
+//func (* User) TableName() string {
+//	return `users`
+//}
+
 type NotSoLongTableName struct {
 	Id                int64
 	ReallyLongThingID int64
