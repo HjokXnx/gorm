@@ -11,28 +11,28 @@ import (
 	"time"
 )
 
-// DB contains information for current db connection
+// DB 存储了当前数据库连接的信息
 type DB struct {
 	sync.RWMutex
-	Value        interface{}
-	Error        error
-	RowsAffected int64
+	Value        interface{} // 传入的引用值，一般是 struct、slice、整型的指针
+	Error        error       // 链试操作中保存错误的对象，实际是 []error
+	RowsAffected int64       // 影响行数，在某些操作中无意义，但日志依然会输出影响零行
 
-	// single db
-	db                SQLCommon
-	blockGlobalUpdate bool
-	logMode           logModeValue
-	logger            logger
-	search            *search
-	values            sync.Map
+	// 链式操作生成的各个 DB 对象可能会改变的值（clone 之后可能改变值）
+	db                SQLCommon    // 用于执行数据库操作的底层对象
+	blockGlobalUpdate bool         // 是否禁止全局更新，建议开启
+	logMode           logModeValue // 日志输出模式，分为无日志、默认日志、详细日志三种
+	logger            logger       // 日志输出对象，是 logger 接口的实现
+	search            *search      // 存储搜索条件的 search
+	values            sync.Map     // 各个作用域的配置参数
 
-	// global db
-	parent        *DB
-	callbacks     *Callback
-	dialect       Dialect
-	singularTable bool
+	// 全局所有的 DB 对象拥有相同的值（初始化之后，即使 clone 也不改变值）
+	parent        *DB       // 指向创建的第一个 DB 对象
+	callbacks     *Callback // 回调函数对象
+	dialect       Dialect   // 各种数据库的操作对象
+	singularTable bool      // 表名是否用单数形式解析
 
-	// function to be used to override the creating of a new timestamp
+	// 用于实时获取当前时间戳的函数
 	nowFuncOverride func() time.Time
 }
 
