@@ -40,7 +40,7 @@ func init() {
 		panic(fmt.Sprintf("No error should happen when connecting to test database, but got err=%+v", err))
 	}
 
-	runMigration()
+	// runMigration()
 }
 
 func OpenTestConnection() (db *gorm.DB, err error) {
