@@ -327,11 +327,13 @@ func (s *DB) Assign(attrs ...interface{}) *DB {
 
 // First find first record that match given conditions, order by primary key
 func (s *DB) First(out interface{}, where ...interface{}) *DB {
-	newScope := s.NewScope(out)
-	newScope.Search.Limit(1)
+	newScope := s.NewScope(out)// 生成此次操作的作用域。该作用域会 clone DB，并继承 DB.search 对象
+	newScope.Search.Limit(1)// 生成 SQL 中 `LIMIT 1` 的来源
 
-	return newScope.Set("gorm:order_by_primary_key", "ASC").
-		inlineCondition(where...).callCallbacks(s.parent.callbacks.queries).db
+	return newScope.
+		Set("gorm:order_by_primary_key", "ASC").// 生成 SQL 中 `ORDER BY `users`.`id` ASC` 的来源
+		inlineCondition(where...).// 内联条件，仅在此次数据库操作中生效
+		callCallbacks(s.parent.callbacks.queries).db// 执行回调函数
 }
 
 // Take return a record that match given conditions, the order will depend on the database implementation

@@ -9,6 +9,29 @@ import (
 // run test:
 // DEBUG=false GORM_DIALECT="mysql" GORM_DSN="root:MySQL9.9@tcp(mysql57:3306)/gorm?charset=utf8&parseTime=True" go test
 
+// TestLouvPureQueryFlow show pure query flow
+func TestLouvPureQueryFlow(t *testing.T) {
+
+	var user User
+
+	err := DB.
+		Debug().
+		Where(map[string]interface{}{
+			`id`: 79,
+		}).
+		Select([]string{`id`, `age`}).
+		First(&user).
+		Error
+
+	// SELECT id, age FROM `users`  WHERE (`users`.`id` = 79) ORDER BY `users`.`id` ASC LIMIT 1
+
+	if err != nil {
+		t.Fatalf(`query err: %s`, err)
+	}
+
+	t.Logf(`get user, id: %d, age: %d`, user.Id, user.Age)
+}
+
 func TestLouvQuery(t *testing.T) {
 
 	var user1 User
@@ -25,7 +48,7 @@ func TestLouvQuery(t *testing.T) {
 		}).
 		First(&user1)
 
-	t.Log("\n%+v\n", user1)
+	t.Logf("\n%+v\n", user1)
 	t.Log(result.Error, result.RowsAffected)
 }
 
