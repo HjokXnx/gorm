@@ -128,6 +128,8 @@ func TestLouvTxRows(t *testing.T) {
 		break
 	}
 
+	// 省略事务中的其他操作，例如 INSET / UPDATE
+
 	err = tx.Commit().Error
 	if err != nil {
 		t.Fatalf(`Commit err: [%s]`, err)
