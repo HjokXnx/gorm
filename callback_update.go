@@ -7,16 +7,25 @@ import (
 	"strings"
 )
 
-// Define callbacks for updating
+// UPDATE 的回调函数
 func init() {
+	// 分配更新属性。即将 UPDATE 语句中 SET 值转换为 `map[string]interface`
 	DefaultCallback.Update().Register("gorm:assign_updating_attributes", assignUpdatingAttributesCallback)
+	// 开启事务
 	DefaultCallback.Update().Register("gorm:begin_transaction", beginTransactionCallback)
+	// 调用更新前的钩子函数
 	DefaultCallback.Update().Register("gorm:before_update", beforeUpdateCallback)
+	// 更新前的关联模型处理
 	DefaultCallback.Update().Register("gorm:save_before_associations", saveBeforeAssociationsCallback)
+	// 自动更新时间戳
 	DefaultCallback.Update().Register("gorm:update_time_stamp", updateTimeStampForUpdateCallback)
+	// 实际执行更新语句
 	DefaultCallback.Update().Register("gorm:update", updateCallback)
+	// 更新后的关联模型处理
 	DefaultCallback.Update().Register("gorm:save_after_associations", saveAfterAssociationsCallback)
+	// 调用更新后的钩子函数
 	DefaultCallback.Update().Register("gorm:after_update", afterUpdateCallback)
+	// 回滚或提交事务（如果之前成功开启了事务）
 	DefaultCallback.Update().Register("gorm:commit_or_rollback_transaction", commitOrRollbackTransactionCallback)
 }
 
