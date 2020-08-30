@@ -238,7 +238,7 @@ func (scope *Scope) SetColumn(column interface{}, value interface{}) error {
 	return errors.New("could not convert column to field")
 }
 
-// CallMethod call scope value's method, if it is a slice, will call its element's method one by one
+//CallMethod 调用返回值的一个方法。如果是切片，则对切片里所有的元素调用一次（如果有）
 func (scope *Scope) CallMethod(methodName string) {
 	if scope.Value == nil {
 		return
@@ -429,6 +429,7 @@ func (scope *Scope) CommitOrRollback() *Scope {
 // Private Methods For *gorm.Scope
 ////////////////////////////////////////////////////////////////////////////////
 
+//goland:noinspection GoUnhandledErrorResult
 func (scope *Scope) callMethod(methodName string, reflectValue reflect.Value) {
 	// Only get address from non-pointer
 	if reflectValue.CanAddr() && reflectValue.Kind() != reflect.Ptr {
