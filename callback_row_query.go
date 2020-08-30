@@ -32,9 +32,12 @@ func rowQueryCallback(scope *Scope) {
 			scope.SQL += addExtraSpaceIfExist(fmt.Sprint(str))
 		}
 
+		// 单行查询，即调用的是 `DB.Row()`
 		if rowResult, ok := result.(*RowQueryResult); ok {
 			rowResult.Row = scope.SQLDB().QueryRow(scope.SQL, scope.SQLVars...)
-		} else if rowsResult, ok := result.(*RowsQueryResult); ok {
+		} else
+		// 单行查询，即调用的是 `DB.Rows()`
+		if rowsResult, ok := result.(*RowsQueryResult); ok {
 			rowsResult.Rows, rowsResult.Error = scope.SQLDB().Query(scope.SQL, scope.SQLVars...)
 		}
 	}
