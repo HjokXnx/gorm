@@ -8,6 +8,8 @@ import (
 
 // run test:
 // DEBUG=false GORM_DIALECT="mysql" GORM_DSN="root:MySQL9.9@tcp(mysql57:3306)/gorm?charset=utf8&parseTime=True" go test
+// goland Environment in configuration:
+// GORM_DSN=root:MySQL9.9@tcp(localhost:3357)/gorm?charset=utf8&parseTime=True;GORM_DIALECT=mysql;DEBUG=false
 
 // TestLouvPureQueryFlow show pure query flow
 func TestLouvPureQueryFlow(t *testing.T) {
@@ -67,40 +69,31 @@ func TestLouvUpdate(t *testing.T) {
 	t.Log(result.Error, result.RowsAffected)
 }
 
-func TestLouvExecFind(t *testing.T) {
+// TestLouvExecRows for question 2
+func TestLouvExecRows(t *testing.T) {
 
 	const sql = `SELECT id FROM users WHERE id = 79`
 
-	var user2 User
-
-	rows, err := DB.Model(user2).Table(`users`).
-		//Debug().
-		Exec(sql).
-		//Raw(sql).
-		Rows()
+	rows, err := DB.Table(`users`).Exec(sql).Rows()
 
 	if err != nil {
 		t.Error(`Rows err: `, err)
 		return
 	}
 
-	// noinspection GoUnhandledErrorResult
+	//goland:noinspection GoUnhandledErrorResult
 	defer rows.Close()
 
-	var scanErrAmt uint32
+	var id uint64
 
 	for rows.Next() {
-		var id int64
 		err = rows.Scan(&id)
 		if err != nil {
-			scanErrAmt++
-			t.Errorf(`Scan err amt: %d, is: %s`, scanErrAmt, err)
+			t.Errorf(`Scan err: [%s]`, err)
 			continue
 		}
-		t.Log(`Scan ok. id: `, id)
+		t.Logf(`Scan ok: [%d]`, id)
 	}
-
-	t.Log(`ok`)
 }
 
 func TestLouvTxRows(t *testing.T) {
