@@ -8,11 +8,11 @@ import (
 
 // Define callbacks for querying
 func init() {
-	// 执行数据库操作，并将查询结果进行映射
+	// 查询回调。执行数据库操作，并将查询结果进行映射
 	DefaultCallback.Query().Register("gorm:query", queryCallback)
-	// 关联模型的预加载，此处不表
+	// 预加载回调。关联模型的预加载，此处不表
 	DefaultCallback.Query().Register("gorm:preload", preloadCallback)
-	// 对 struct 或 struct 切片，调用钩子事件（如果已定义）
+	// 查询后回调。对 struct 或 struct 切片，调用钩子事件（如果已定义）
 	DefaultCallback.Query().Register("gorm:after_query", afterQueryCallback)
 }
 
