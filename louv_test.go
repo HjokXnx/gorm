@@ -96,51 +96,40 @@ func TestLouvExecRows(t *testing.T) {
 	}
 }
 
+// TestLouvTxRows for question 3
 func TestLouvTxRows(t *testing.T) {
 
 	tx := DB.Begin()
-	//tx := DB
 	if tx.Error != nil {
-		t.Fatalf(`tx begin err: %v`, tx.GetErrors())
+		t.Fatalf(`Begin err: [%v]`, tx.GetErrors())
 	}
 
+	// SELECT id FROM `users`  WHERE (id < 80) LIMIT 1
 	rows, err := tx.Table(`users`).
-		//Debug().
-		Where(`id < 80`).
-		Select([]string{`id`}).
-		Limit(1).
+		Where(`id < 80`).Select([]string{`id`}).Limit(1).
 		Rows()
 
 	if err != nil {
-		t.Error(`Rows err: `, err)
+		t.Fatalf(`Rows err: [%s]`, err)
 		return
 	}
 
-	// noinspection GoUnhandledErrorResult
 	defer rows.Close()
 
-	var scanErrAmt uint32
+	var id uint64
 
 	for rows.Next() {
-		var id int64
 		err = rows.Scan(&id)
 		if err != nil {
-			scanErrAmt++
-			t.Errorf(`Scan err amt: %d, is: %s`, scanErrAmt, err)
+			t.Errorf(`Scan err: [%s]`, err)
 			continue
 		}
-
-		t.Log(`Scan ok. id: `, id)
+		t.Logf(`Scan ok: [%d]`, id)
 		break
 	}
 
-	//_ = rows.Close()
-
 	err = tx.Commit().Error
 	if err != nil {
-		t.Error(`Commit err: `, err)
-		return
+		t.Fatalf(`Commit err: [%s]`, err)
 	}
-
-	t.Log(`ok`)
 }
